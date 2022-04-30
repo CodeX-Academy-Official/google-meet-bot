@@ -9,7 +9,35 @@ Apify.main(async () => {
     console.log('Input:');
     console.dir(input);
 
-    /**
-     * Actor code
-     */
+    const browser = await Apify.launchPuppeteer();
+    const page = await browser.newPage();
+    const navigationPromise = page.waitForNavigation();
+    console.log('Going to accounts.google.com...');
+    await page.goto('https://accounts.google.com/');
+
+    await navigationPromise;
+    await page.waitForSelector('input[type="email"]');
+    await page.click('input[type="email"]');
+
+    await navigationPromise;
+
+    console.log('Typing in email...');
+    await page.type('input[type="email"]', input.Email);
+    await page.waitForSelector('#identifierNext');
+    await page.click('#identifierNext');
+    await page.waitFor(5000);
+
+    await page.waitForSelector('input[type="password"]');
+    await page.click('input[type="password"]');
+
+    console.log('Typing in password...');
+    await page.type('input[type="password"]', input.Password);
+    await page.waitForSelector('#passwordNext');
+    await page.click('#passwordNext');
+
+    await page.waitForNavigation({
+        waitUntil: 'networkidle0',
+    });
+
+    console.log('Logged in to google successfully...');
 });
