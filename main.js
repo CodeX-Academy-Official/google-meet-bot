@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 // This is the main Node.js source code file of your actor.
 
 // Import Apify SDK. For more information, see https://sdk.apify.com/
@@ -9,7 +10,17 @@ Apify.main(async () => {
     console.log('Input:');
     console.dir(input);
 
-    const browser = await Apify.launchPuppeteer();
+    const browser = await Apify.launchPuppeteer({
+        useChrome: true,
+        launchOptions: {
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--use-fake-ui-for-media-stream',
+                '--disable-audio-output',
+            ],
+        },
+    });
     const page = await browser.newPage();
     const navigationPromise = page.waitForNavigation();
     console.log('Going to accounts.google.com...');
@@ -25,7 +36,7 @@ Apify.main(async () => {
     await page.type('input[type="email"]', input.Email);
     await page.waitForSelector('#identifierNext');
     await page.click('#identifierNext');
-    await page.waitFor(5000);
+    await page.waitForTimeout(5000);
 
     await page.waitForSelector('input[type="password"]');
     await page.click('input[type="password"]');
@@ -40,4 +51,49 @@ Apify.main(async () => {
     });
 
     console.log('Logged in to google successfully...');
+    const meetPage = await browser.newPage();
+    console.log('Going to meet.google.com...');
+    await meetPage.goto('https://meet.google.com/');
+    await meetPage.click('input[class="VfPpkd-fmcmS-wGMbrd B5oKfd"]');
+    console.log('Entering meet link...');
+    await meetPage.type('input[type="text"]', input.MeetLink);
+    console.log('Waiting for 3sec...');
+    await meetPage.waitForTimeout(3000);
+    console.log('Clicking join button...');
+    await meetPage.click(
+        'button[class="VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-dgl2Hf ksBjEc lKxP2d qfvgSe cjtUbb"]'
+    );
+    console.log('Clicked join button...');
+    console.log('Waiting for 2sec...');
+    await meetPage.waitForTimeout(2000);
+    console.log(
+        'Waiting for 10sec to check if the meeting has Ask to join enabled...'
+    );
+    await meetPage.waitForTimeout(3000);
+
+    // turn off cam using Ctrl+E
+    await meetPage.waitForTimeout(8000);
+    await meetPage.keyboard.down('ControlLeft');
+    await meetPage.keyboard.press('KeyE');
+    await meetPage.keyboard.up('ControlLeft');
+    await meetPage.waitForTimeout(2000);
+
+    // turn off mic using Ctrl+D
+    await meetPage.waitForTimeout(1000);
+    await meetPage.keyboard.down('ControlLeft');
+    await meetPage.keyboard.press('KeyD');
+    await meetPage.keyboard.up('ControlLeft');
+    await meetPage.waitForTimeout(2000);
+
+    // Join Now
+    await meetPage.click(
+        'button[class="VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-k8QpJ VfPpkd-LgbsSe-OWXEXe-dgl2Hf nCP5yc AjY5Oe DuMIQc qfvgSe jEvJdc QJgqC"]'
+    );
+    console.log('Joined class successfully...');
+    await page.waitForTimeout(input.EndTime);
+    await meetPage.goBack();
+    console.log('LEFT THE MEETING SUCCESSFULYL!');
+    console.log('Closing browser in 10sec');
+    await page.waitForTimeout(10000);
+    await browser.close();
 });
