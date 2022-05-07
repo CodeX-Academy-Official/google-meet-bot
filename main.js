@@ -1,3 +1,6 @@
+/* eslint-disable function-paren-newline */
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable no-console */
 /* eslint-disable comma-dangle */
 // This is the main Node.js source code file of your actor.
 
@@ -52,6 +55,7 @@ Apify.main(async () => {
 
     console.log('Logged in to google successfully...');
     const meetPage = await browser.newPage();
+    await page.setDefaultNavigationTimeout(input.EndTime);
     console.log('Going to meet.google.com...');
     await meetPage.goto('https://meet.google.com/');
     await meetPage.click('input[class="VfPpkd-fmcmS-wGMbrd B5oKfd"]');
@@ -90,10 +94,28 @@ Apify.main(async () => {
         'button[class="VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-k8QpJ VfPpkd-LgbsSe-OWXEXe-dgl2Hf nCP5yc AjY5Oe DuMIQc qfvgSe jEvJdc QJgqC"]'
     );
     console.log('Joined class successfully...');
-    await page.waitForTimeout(input.EndTime);
+    await meetPage.waitForTimeout(3000);
+
+    const end = Date.now() + input.EndTime;
+
+    while (Date.now() < end) {
+        console.log(Date.now());
+        if (
+            (await meetPage.$(
+                'div[class="VfPpkd-Sx9Kwc cC1eCc UDxLd PzCPDd Qb2h6b xInSQ OjJiBf AVesm VfPpkd-Sx9Kwc-OWXEXe-FNFY6c"]'
+            )) !== null
+        ) {
+            const [button] = await meetPage.$x(
+                "//button[contains(., 'Admit')]"
+            );
+            if (button) {
+                await button.click();
+            }
+            // await meetPage.click(
+            //     'button[class="VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-dgl2Hf ksBjEc lKxP2d qfvgSe AjXHhf"]'
+            // );
+        }
+    }
     await meetPage.goBack();
-    console.log('LEFT THE MEETING SUCCESSFULYL!');
-    console.log('Closing browser in 10sec');
-    await page.waitForTimeout(10000);
     await browser.close();
 });
