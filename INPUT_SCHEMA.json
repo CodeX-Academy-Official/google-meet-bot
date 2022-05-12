@@ -7,11 +7,11 @@
             "title": "link and endtime",
             "type": "object",
             "description": "link url and endtime in ms",
+            "editor": "json",
             "prefill": {
                 "MeetLink": "",
                 "EndTime": ""
-            },
-            "editor": "textarea"
+            }
         }
     },
     "required": ["inputs"]
