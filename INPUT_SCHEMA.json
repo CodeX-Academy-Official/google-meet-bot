@@ -10,7 +10,8 @@
             "prefill": {
                 "MeetLink": "",
                 "EndTime": ""
-            }
+            },
+            "editor": "textarea"
         }
     },
     "required": ["inputs"]
