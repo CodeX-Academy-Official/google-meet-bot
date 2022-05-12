@@ -4,9 +4,14 @@
     "schemaVersion": 1,
     "properties": {
         "inputs": {
-            "MeetLink": "",
-            "EndTime": ""
+            "title": "link and endtime",
+            "type": "object",
+            "description": "link url and endtime in ms",
+            "prefill": {
+                "MeetLink": "",
+                "EndTime": ""
+            }
         }
     },
-    "required": []
+    "required": ["inputs"]
 }
