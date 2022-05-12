@@ -2,5 +2,7 @@
 
 .idea
 node_modules
-
+.env
+.env.local
 apify_storage
+package-lock.json

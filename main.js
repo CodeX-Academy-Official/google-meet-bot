@@ -36,7 +36,7 @@ Apify.main(async () => {
     await navigationPromise;
 
     console.log('Typing in email...');
-    await page.type('input[type="email"]', input.Email);
+    await page.type('input[type="email"]', process.env.EMAIL);
     await page.waitForSelector('#identifierNext');
     await page.click('#identifierNext');
     await page.waitForTimeout(5000);
@@ -45,7 +45,7 @@ Apify.main(async () => {
     await page.click('input[type="password"]');
 
     console.log('Typing in password...');
-    await page.type('input[type="password"]', input.Password);
+    await page.type('input[type="password"]', process.env.PASSWORD);
     await page.waitForSelector('#passwordNext');
     await page.click('#passwordNext');
 
