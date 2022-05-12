@@ -16,6 +16,7 @@ Apify.main(async () => {
     const browser = await Apify.launchPuppeteer({
         // useChrome: true,
         launchOptions: {
+            headless: false,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
