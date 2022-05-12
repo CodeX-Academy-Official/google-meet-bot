@@ -14,7 +14,7 @@ Apify.main(async () => {
     console.dir(input);
 
     const browser = await Apify.launchPuppeteer({
-        useChrome: true,
+        // useChrome: true,
         launchOptions: {
             args: [
                 '--no-sandbox',
