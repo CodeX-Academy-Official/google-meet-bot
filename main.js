@@ -15,13 +15,20 @@ Apify.main(async () => {
 
     const browser = await Apify.launchPuppeteer({
         useChrome: true,
+        stealth: true,
         launchOptions: {
+            headless: true,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--use-fake-ui-for-media-stream',
                 '--disable-audio-output',
             ],
+        },
+        stealthOptions: {
+            addLanguage: false,
+            hackPermissions: true,
+            mockChrome: true,
         },
     });
     const page = await browser.newPage();
@@ -49,6 +56,9 @@ Apify.main(async () => {
     await page.waitForSelector('#passwordNext');
     await page.click('#passwordNext');
 
+    await page.waitForNavigation({
+        waitUntil: 'networkidle0',
+    });
     await page.waitForNavigation({
         waitUntil: 'networkidle0',
     });
